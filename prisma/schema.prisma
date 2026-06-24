@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// A scheduled visit to an orphanage
+model VisitSchedule {
+  id          String   @id @default(cuid())
+  visitorName String
+  email       String
+  orphanageId String
+  visitDate   String
+  partySize   Int      @default(1)
+  message     String?
+  createdAt   DateTime @default(now())
+}
+
+// A scheduled prayer time for the fatherless (with optional email reminder)
+model PrayerSchedule {
+  id             String   @id @default(cuid())
+  name           String
+  email          String
+  prayerDate     String
+  prayerTime     String
+  reminderEmail  Boolean  @default(false)
+  note           String?
+  createdAt      DateTime @default(now())
+}
+
+// A scheduled donation time (with optional email reminder)
+model DonationSchedule {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  donationDate  String
+  reminderEmail Boolean  @default(false)
+  note          String?
+  createdAt     DateTime @default(now())
+}
+
+// Administrator with email+password+TOTP login
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  totpSecret   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Patron (donor account) with email+password login
+model Patron {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  resetToken        String?
+  resetTokenExpires DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// A recorded donor + donation
+model Donor {
+  id             String   @id @default(cuid())
+  displayName    String
+  amount         Float
+  // Currency code: "USD" or "IDR". Sums are tracked per currency (no conversion).
+  currency       String   @default("USD")
+  // Whether the donor chose to mask their identity
+  anonymousName  Boolean  @default(false)
+  // Whether the donor chose to mask the amount
+  anonymousAmount Boolean @default(false)
+  paymentMethod  String
+  message        String?
+  createdAt      DateTime @default(now())
+}

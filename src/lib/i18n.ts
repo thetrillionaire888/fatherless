@@ -1,0 +1,742 @@
+"use client";
+
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+export type Lang = "en" | "id";
+
+type State = {
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  toggle: () => void;
+};
+
+// skipHydration avoids SSR/CSR hydration mismatch; we rehydrate in LanguageGate.
+export const useLanguage = create<State>()(
+  persist(
+    (set, get) => ({
+      lang: "en",
+      setLang: (l) => set({ lang: l }),
+      toggle: () => set({ lang: get().lang === "en" ? "id" : "en" }),
+    }),
+    {
+      name: "rbh-lang",
+      skipHydration: true,
+    }
+  )
+);
+
+export const LANG_LABEL: Record<Lang, string> = {
+  en: "EN",
+  id: "ID",
+};
+
+export const LANG_NAME: Record<Lang, string> = {
+  en: "English",
+  id: "Bahasa Indonesia",
+};
+
+// ---- UI string dictionary ----
+type Dict = Record<Lang, Record<string, string>>;
+
+export const DICT: Dict = {
+  en: {
+    // Generic
+    "app.name": "Rumah Buah Hati",
+    "app.tagline": "For the fatherless",
+    "nav.home": "Home",
+    "nav.calendar": "Calendar",
+    "nav.map": "Map",
+    "nav.gallery": "Gallery",
+    "nav.donation": "Patreon",
+    "nav.give": "Give",
+    "nav.menu": "Toggle menu",
+    "nav.goHome": "Go to home",
+
+    // Hero
+    "hero.badge": "Yayasan Rumah Buah Hati — Bantul, Yogyakarta",
+    "hero.title1": "Help the",
+    "hero.title2": "Fatherless",
+    "hero.verse":
+      "\u201CPure religion and undefiled before God and the Father is this, To visit the fatherless and widows in their affliction.\u201D",
+    "hero.verseRef": "James 1:27, KJV",
+    "hero.cta.give": "Give to the Fatherless",
+    "hero.cta.story": "Read their untold story",
+    "hero.stats.children": "children",
+    "hero.stats.orphanages": "orphanages",
+    "hero.stats.vow": "vow kept",
+    "hero.bibleVerse":
+      "\u201CBring ye all the tithes into the storehouse\u2026 and prove me now herewith.\u201D",
+    "hero.bibleRef": "Malachi 3:10",
+
+    // Bible scrolls
+    "bible.badge": "The Holy Scriptures — King James Version",
+    "bible.heading": "The Word concerning the Fatherless",
+    "bible.subtitle":
+      "Four passages, written upon parchment, that command the people of God to remember the fatherless.",
+    "bible.counter": "Passage",
+    "bible.prev": "Previous passage",
+    "bible.next": "Next passage",
+
+    // Globe
+    "globe.badge": "One cry among many",
+    "globe.heading": "The fatherless cry from the ends of the earth",
+    "globe.subtitle":
+      "Watch the world turn with their cries — and zoom upon one house, in Bantul, where a vow was kept.",
+    "globe.cap1": "\u201CThe fatherless cry for help across the turning earth\u2026\u201D",
+    "globe.cap2":
+      "\u201C\u2026and the Lord heareth, and draweth near to one house \u2014\u201D",
+    "globe.cap3": "Bantul, Yogyakarta, Indonesia",
+    "globe.cap3sub": "Yayasan Rumah Buah Hati — 30 fatherless children",
+    "globe.replay": "Replay the cry of the fatherless",
+
+    // Stories
+    "stories.badge": "Stories from the house in Bantul",
+    "stories.heading": "Untold, until now",
+    "stories.subtitle":
+      "Voices of the caregiver, the child, and the donor — woven together around one promise kept.",
+    "stories.perspectives.heading": "From every perspective",
+    "stories.perspectives.subtitle":
+      "Caregiver, child, and donor — the same house, seen through three hearts.",
+    "stories.perspective.Caregiver": "The Caregiver",
+    "stories.perspective.Child": "A Child's Voice",
+    "stories.perspective.Donor": "The Donor",
+    "stories.perspective.Field": "From the Field",
+
+    // Ways to help
+    "help.heading": "Three ways to answer",
+    "help.subtitle":
+      "Give financially. Come physically. Or stand in prayer. Every path unlocks God\u2019s promise toward the fatherless.",
+    "help.kind.Financially": "Financially",
+    "help.kind.Physically": "Physically",
+    "help.kind.In Prayer": "In Prayer",
+    "help.giveNow": "Give now",
+    "help.scheduleVisit": "Schedule a visit",
+    "help.commitPray": "Commit to pray",
+
+    // CTA
+    "cta.heading": "Claim God\u2019s promise",
+    "cta.verse":
+      "\u201CBring ye all the tithes into the storehouse\u2026 and prove me now herewith, saith the LORD of hosts, if I will not open you the windows of heaven, and pour you out a blessing, that there shall not be room enough to receive it.\u201D",
+    "cta.ref": "Malachi 3:10 — KJV",
+    "cta.give": "Give to the fatherless",
+    "cta.schedule": "Schedule a visit or prayer",
+    "cta.map": "See them on the map",
+
+    // Calendar
+    "cal.badge": "The Calendar of Care",
+    "cal.heading": "Schedule your visit, prayer, or gift",
+    "cal.subtitle":
+      "Choose a day to come, to pray, or to give — and see who else has already answered the call.",
+    "cal.tab.visit": "Schedule a Visit",
+    "cal.tab.prayer": "Schedule Prayer",
+    "cal.tab.donation": "Schedule Donation",
+    "cal.tab.visitShort": "Visit",
+    "cal.tab.prayerShort": "Prayer",
+    "cal.tab.donationShort": "Give",
+    "cal.visit.heading": "Plan your visit",
+    "cal.visit.subtitle": "Come with hands ready. The children will welcome you.",
+    "cal.visit.name": "Your name",
+    "cal.visit.email": "Email",
+    "cal.visit.orphanage": "Orphanage to visit",
+    "cal.visit.date": "Visit date",
+    "cal.visit.party": "Party size",
+    "cal.visit.message": "Message (optional)",
+    "cal.visit.messagePh": "What would you like to bring or do?",
+    "cal.visit.submit": "Schedule visit",
+    "cal.visit.submitting": "Scheduling\u2026",
+    "cal.visit.list": "Who is coming",
+    "cal.visit.listSub": "See the visits already scheduled by others.",
+    "cal.visit.person": "person",
+    "cal.visit.people": "people",
+    "cal.visit.empty": "No visits scheduled yet. Be the first.",
+    "cal.visit.successTitle": "Visit scheduled!",
+    "cal.visit.successDesc": "We will prepare the children to welcome you.",
+    "cal.err.required":
+      "Please complete the form",
+    "cal.err.visitRequired": "Your name, email, and a visit date are required.",
+    "cal.err.prayerRequired":
+      "Your name, email, and a prayer date are required.",
+    "cal.err.donationRequired":
+      "Your name, email, and a donation date are required.",
+    "cal.err.generic": "Something went wrong",
+    "cal.err.tryAgain": "Please try again.",
+
+    "cal.prayer.heading": "Commit a prayer hour",
+    "cal.prayer.subtitle":
+      "\u201CThe effectual fervent prayer of a righteous man availeth much.\u201D — James 5:16",
+    "cal.prayer.name": "Your name",
+    "cal.prayer.date": "Prayer date",
+    "cal.prayer.time": "Time of day",
+    "cal.prayer.reminder": "Email me a reminder",
+    "cal.prayer.note": "Prayer focus (optional)",
+    "cal.prayer.notePh":
+      "e.g. For the children's health and Mrs Telly's strength",
+    "cal.prayer.submit": "Commit to pray",
+    "cal.prayer.list": "The prayer wall",
+    "cal.prayer.listSub":
+      "Brothers and sisters standing in the gap for the fatherless.",
+    "cal.prayer.reminderSet": "Reminder set",
+    "cal.prayer.empty":
+      "No prayers scheduled yet. Be the first to stand in the gap.",
+    "cal.prayer.successTitle": "Prayer scheduled",
+    "cal.prayer.successDescReminder":
+      "We will email you a reminder before your prayer time.",
+    "cal.prayer.successDescNo":
+      "Your prayer commitment is recorded.",
+
+    "cal.don.heading": "Schedule a donation day",
+    "cal.don.subtitle":
+      "Pick the day you will give, and we will remind you. To give right now,",
+    "cal.don.visitLink": "visit the Donation page",
+    "cal.don.name": "Your name",
+    "cal.don.email": "Email",
+    "cal.don.date": "Donation date",
+    "cal.don.reminder": "Email me a reminder",
+    "cal.don.note": "Note (optional)",
+    "cal.don.notePh": "e.g. Monthly tithe for the children",
+    "cal.don.submit": "Schedule donation day",
+    "cal.don.list": "Upcoming donation days",
+    "cal.don.listSub": "Others who have committed a day to give.",
+    "cal.don.empty": "No donation days scheduled yet.",
+    "cal.don.successTitle": "Donation reminder scheduled",
+    "cal.don.successDescReminder":
+      "We will email you a reminder on your chosen day.",
+    "cal.don.successDescNo": "Your donation day is recorded.",
+
+    // Map
+    "map.badge": "The Map of the Fatherless",
+    "map.heading": "Three houses across Java",
+    "map.subtitle":
+      "From Bantul to Semarang to Surabaya — small Christian homes sheltering the fatherless the state will not claim.",
+    "map.isleTitle": "Isle of Java",
+    "map.note": "Anno Domini — orphanages marked in ember",
+    "map.allLocations": "All locations",
+    "map.children": "children",
+    "map.presentCondition": "Present condition",
+    "map.give": "Give to this house",
+    "map.schedule": "Schedule a visit",
+    "map.gallery": "See the gallery",
+    "map.fullName": "Full name",
+    "map.aksaraJawa": "Aksara Jawa (archaic Javanese)",
+    "map.address": "Address",
+    "map.openInMaps": "Open in Google Maps",
+    "map.location": "Location",
+
+    // Gallery
+    "gallery.badge": "The Gallery",
+    "gallery.heading": "Their conditions, their faces",
+    "gallery.subtitle":
+      "See the homes and the children who wait. Then find each house on the map.",
+    "gallery.openMapTitle": "Find each house on the map",
+    "gallery.openMapDesc":
+      "From Bantul to Semarang to Surabaya — locate every home sheltering the fatherless across Java.",
+    "gallery.openMap": "Open the Map",
+    "gallery.viewOnMap": "View on map",
+
+    // Donation
+    "don.badge": "Give to the Fatherless",
+    "don.patreonWelcome": "Welcome Patreon, logged in as",
+    "don.patreonThanks": "Thank you for standing with the fatherless. Your faithfulness is unlocking God\u2019s promise for these little ones.",
+    "don.patreonSignInPrompt": "Sign in or create an account to track your giving and stand with the fatherless.",
+    "don.patreonSignIn": "Sign in",
+    "don.patreonSignUp": "Sign up",
+    "don.patreonDashWelcome": "Welcome, patron",
+    "don.patreonDashBody": "Signed in as {email}. Thank you for standing with the fatherless. Visit the home page to give, schedule a visit, or commit to prayer.",
+    "don.patreonDashBack": "Back to site",
+    "don.loginToastTitle": "Welcome",
+    "don.loginToastDesc": "Signed in successfully.",
+    "don.signupToastTitle": "Welcome",
+    "don.signupToastDesc": "Your account is ready.",
+
+    // Login / signup screen
+    "auth.loginTitle": "Sign in",
+    "auth.signupTitle": "Sign up",
+    "auth.forgotTitle": "Reset password",
+    "auth.email": "Email",
+    "auth.password": "Password",
+    "auth.confirmPassword": "Confirm password",
+    "auth.totp": "TOTP token (admin only)",
+    "auth.totpHint": "Six-digit code from your authenticator app.",
+    "auth.signInBtn": "Sign in",
+    "auth.signUpBtn": "Create account",
+    "auth.sendResetBtn": "Send reset link",
+    "auth.resetBtn": "Set new password",
+    "auth.forgotLink": "Forgot password?",
+    "auth.backToSignIn": "Back to sign in",
+    "auth.noAccount": "New here? Create an account",
+    "auth.haveAccount": "Already have an account? Sign in",
+    "auth.resetDone": "If that email exists, a reset link has been generated.",
+    "auth.devResetLink": "Dev reset link (no SMTP configured)",
+    "auth.passwordResetOk": "Password reset. You can now sign in.",
+    "auth.signOutBtn": "Sign out",
+
+    // Dashboard cards
+    "dash.changePwTitle": "Change password",
+    "dash.changePwDesc": "Update your account password.",
+    "dash.currentPassword": "Current password",
+    "dash.newPassword": "New password",
+    "dash.confirmPassword": "Confirm new password",
+    "dash.save": "Save",
+    "dash.passwordChanged": "Password changed.",
+    "dash.totpTitle": "Register TOTP",
+    "dash.totpDesc": "Scan this QR code with your authenticator app, then verify with a 6-digit code to register a new TOTP secret.",
+    "dash.totpNewSecret": "New secret",
+    "dash.totpToken": "Verification token",
+    "dash.totpRegister": "Register TOTP",
+    "dash.totpGenerate": "Generate new secret",
+    "dash.totpRegistered": "TOTP secret registered.",
+    "dash.donorsTitle": "Donor management",
+    "dash.donorsDesc": "Delete individual donors or clear all.",
+    "dash.donorsEmpty": "No donors recorded yet.",
+    "dash.donorsClear": "Clear all donors",
+    "dash.donorsDelete": "Delete",
+    "dash.donorsDeleteConfirm": "Delete this donor?",
+    "dash.donorsClearConfirm": "Delete ALL donors? This cannot be undone.",
+    "dash.donorsCleared": "All donors cleared.",
+    "dash.donorDeleted": "Donor deleted.",
+    "dash.donorName": "Name",
+    "dash.donorAmount": "Amount",
+    "dash.donorMethod": "Method",
+    "dash.donorDate": "Date",
+    "dash.backupTitle": "Backup & restore",
+    "dash.backupDesc": "Download a JSON snapshot of all data, or restore from a backup file.",
+    "dash.backupDownload": "Download backup",
+    "dash.backupRestore": "Restore from backup",
+    "dash.backupRestored": "Backup restored.",
+    "dash.backupFailed": "Backup or restore failed.",
+    "don.heading": "Claim God\u2019s promise",
+    "don.subtitle":
+      "\u201CProve me now herewith\u2026 if I will not open you the windows of heaven, and pour you out a blessing.\u201D — Malachi 3:10",
+    "don.formHeading": "Make your gift",
+    "don.formSub": "Choose how to give, and decide what the world may see.",
+    "don.name": "Your name",
+    "don.amount": "Amount",
+    "don.currency": "Currency",
+    "don.currencyHint": "Sums are tracked per currency — no conversion.",
+    "don.payment": "Payment method",
+    "don.secure": "Secure giving \u00B7 You choose what is seen",
+    "don.maskName": "Mask my identity",
+    "don.maskAmount": "Mask my amount",
+    "don.showAs": "Show as",
+    "don.message": "Message",
+    "don.messagePh": "A word for the children\u2026 (required)",
+    "don.preview": "Preview — how others will see your gift",
+    "don.giveNow": "Give now",
+    "don.processing": "Processing\u2026",
+    "don.err.required":
+      "Your name, a valid amount, a payment method, and a message are required.",
+    "don.err.messageRequired": "Please add a message for the children.",
+    "don.err.complete": "Please complete the form",
+    "don.successTitle": "Thank you for your gift!",
+    "don.successDesc": "donation via {method} has been received. May God open the windows of heaven.",
+    "don.stats.undisclosed": "Collective undisclosed giving",
+    "don.stats.undisclosedHint":
+      "The sum of all hidden gifts — honored as one",
+    "don.stats.disclosed": "Disclosed giving",
+    "don.stats.disclosedHint": "Openly declared by donors",
+    "don.stats.donors": "Donors",
+    "don.stats.donorsHint": "Every gift, seen or unseen",
+    "don.list.heading": "The roll of givers",
+    "don.list.sub":
+      "Those who have answered the call — some named, some known only to God.",
+    "don.list.empty": "No gifts yet. Be the first to unlock the promise.",
+    "don.list.disclosedSum": "Disclosed sum",
+    "don.list.undisclosedSum": "Undisclosed sum",
+    "don.payment.note.PayPal": "Redirect to PayPal",
+    "don.payment.note.Stripe": "Secure card via Stripe",
+    "don.payment.note.Gopay": "GoPay e-wallet",
+    "don.payment.note.Shopee Pay": "Shopee Pay e-wallet",
+    "don.payment.note.QRIS": "Scan to pay with any QRIS app",
+    "don.payment.qrisTitle": "QRIS \u2014 Quick Response Indonesian Standard",
+    "don.payment.qrisScan": "Scan this QR code with any QRIS-supported app (GoPay, OVO, DANA, ShopeePay, mobile banking, etc.) to give.",
+    "don.payment.note.VISA": "VISA card",
+    "don.payment.note.Mastercard": "Mastercard",
+    "don.payment.note.Bankwire transfer": "Bank wire transfer",
+
+    // Bankwire
+    "bankwire.title": "Bankwire Transfer Details",
+    "bankwire.subtitle": "For direct transfer — care of Yayasan Rumah Buah Hati",
+    "bankwire.bank": "Bank",
+    "bankwire.swift": "SWIFT Code",
+    "bankwire.account": "Account Number",
+    "bankwire.careOf": "Care of",
+    "bankwire.copy": "Copy",
+    "bankwire.copied": "Copied!",
+    "bankwire.note":
+      "Please use your name as the payment reference and send the transfer receipt to us so we can record your gift.",
+
+    // Contact
+    "contact.title": "Contact",
+    "contact.person": "Contact Person",
+    "contact.phone": "Phone",
+    "contact.instagram": "Instagram",
+    "contact.email": "Email",
+    "contact.whatsapp": "WhatsApp",
+    "contact.whatsappTip": "Message Mrs Telly on WhatsApp",
+
+    // Footer
+    "footer.explore": "Explore",
+    "footer.copyright":
+      "Yayasan Rumah Buah Hati. A vow kept for the fatherless.",
+    "footer.verse":
+      "\u201CFor the poor shall never cease out of the land.\u201D — Deut. 15:11",
+    "footer.verseBody":
+      "\u201CPure religion and undefiled before God and the Father is this, To visit the fatherless and widows in their affliction.\u201D",
+    "footer.verseRef": "James 1:27, KJV",
+
+    // Language
+    "lang.switch": "Switch language",
+  },
+
+  id: {
+    // Generic
+    "app.name": "Rumah Buah Hati",
+    "app.tagline": "Untuk anak yatim",
+    "nav.home": "Beranda",
+    "nav.calendar": "Kalender",
+    "nav.map": "Peta",
+    "nav.gallery": "Galeri",
+    "nav.donation": "Patreon",
+    "nav.give": "Donasi",
+    "nav.menu": "Buka menu",
+    "nav.goHome": "Ke beranda",
+
+    // Hero
+    "hero.badge": "Yayasan Rumah Buah Hati — Bantul, Yogyakarta",
+    "hero.title1": "Bantulah",
+    "hero.title2": "Anak Yatim",
+    "hero.verse":
+      "\u201CIbadah yang murni dan yang tak bernoda di hadapan Allah, Bapa kita, ialah mengunjungi yatim piatu dan janda-janda dalam kesusahan mereka.\u201D",
+    "hero.verseRef": "Yakobus 1:27, TB (LAI)",
+    "hero.cta.give": "Bantulah Anak Yatim",
+    "hero.cta.story": "Baca kisah mereka yang tak terungkap",
+    "hero.stats.children": "anak",
+    "hero.stats.orphanages": "panti",
+    "hero.stats.vow": "janji ditepati",
+    "hero.bibleVerse":
+      "\u201CBawalah seluruh persembahan persepuluhan itu ke dalam rumah perbendaharaan\u2026 Ujilah Aku, sungguh.\u201D",
+    "hero.bibleRef": "Maleakhi 3:10",
+
+    // Bible scrolls
+    "bible.badge": "Alkitab Suci — Terjemahan Baru (LAI)",
+    "bible.heading": "Firman tentang Anak Yatim",
+    "bible.subtitle":
+      "Empat nasihat tertulis di atas perkamen, yang memerintahkan umat Allah untuk mengingat anak yatim.",
+    "bible.counter": "Bagian",
+    "bible.prev": "Bagian sebelumnya",
+    "bible.next": "Bagian berikutnya",
+
+    // Globe
+    "globe.badge": "Satu jeritan di antara banyak",
+    "globe.heading": "Anak yatim berseru dari ujung bumi",
+    "globe.subtitle":
+      "Saksikan dunia berputar dengan jeritan mereka — dan mendekat pada satu rumah, di Bantul, tempat sebuah janji ditepati.",
+    "globe.cap1":
+      "\u201CAnak yatim berseru minta tolong melintasi bumi yang berputar\u2026\u201D",
+    "globe.cap2":
+      "\u201C\u2026dan TUHAN mendengar, dan mendekat pada satu rumah \u2014\u201D",
+    "globe.cap3": "Bantul, Yogyakarta, Indonesia",
+    "globe.cap3sub": "Yayasan Rumah Buah Hati — 30 anak yatim",
+    "globe.replay": "Putar ulang jeritan anak yatim",
+
+    // Stories
+    "stories.badge": "Kisah dari rumah di Bantul",
+    "stories.heading": "Tak terungkap, hingga kini",
+    "stories.subtitle":
+      "Suara pengasuh, anak, dan donor — terjalin di sekitar satu janji yang ditepati.",
+    "stories.perspectives.heading": "Dari setiap sudut pandang",
+    "stories.perspectives.subtitle":
+      "Pengasuh, anak, dan donor — rumah yang sama, dilihat melalui tiga hati.",
+    "stories.perspective.Caregiver": "Sang Pengasuh",
+    "stories.perspective.Child": "Suara Anak",
+    "stories.perspective.Donor": "Sang Donor",
+    "stories.perspective.Field": "Dari Lapangan",
+
+    // Ways to help
+    "help.heading": "Tiga cara untuk menjawab",
+    "help.subtitle":
+      "Bantuan secara finansial. Hadir secara fisik. Atau berdiri dalam doa. Setiap jalan membuka janji Allah bagi anak yatim.",
+    "help.kind.Financially": "Finansial",
+    "help.kind.Physically": "Fisik",
+    "help.kind.In Prayer": "Dalam Doa",
+    "help.giveNow": "Donasi sekarang",
+    "help.scheduleVisit": "Jadwalkan kunjungan",
+    "help.commitPray": "Berkomitmen doa",
+
+    // CTA
+    "cta.heading": "Klaim janji Allah",
+    "cta.verse":
+      "\u201CBawalah seluruh persembahan persepuluhan itu ke dalam rumah perbendaharaan\u2026 Ujilah Aku, sungguh, beginilah firman TUHAN semesta alam, apakah Aku tidak membukakan tingkap-tingkap langit dan mencurahkan berkat kepadamu sampai berkelimpahan.\u201D",
+    "cta.ref": "Maleakhi 3:10 — TB (LAI)",
+    "cta.give": "Bantulah anak yatim",
+    "cta.schedule": "Jadwalkan kunjungan atau doa",
+    "cta.map": "Lihat mereka di peta",
+
+    // Calendar
+    "cal.badge": "Kalender Kasih",
+    "cal.heading": "Jadwalkan kunjungan, doa, atau pemberianmu",
+    "cal.subtitle":
+      "Pilih hari untuk datang, untuk berdoa, atau untuk memberi — dan lihat siapa lagi yang telah menjawab panggilan.",
+    "cal.tab.visit": "Jadwalkan Kunjungan",
+    "cal.tab.prayer": "Jadwalkan Doa",
+    "cal.tab.donation": "Jadwalkan Donasi",
+    "cal.tab.visitShort": "Kunjung",
+    "cal.tab.prayerShort": "Doa",
+    "cal.tab.donationShort": "Donasi",
+    "cal.visit.heading": "Rencanakan kunjunganmu",
+    "cal.visit.subtitle": "Datang dengan tangan yang siap. Anak-anak akan menyambutmu.",
+    "cal.visit.name": "Nama Anda",
+    "cal.visit.email": "Email",
+    "cal.visit.orphanage": "Panti yang dikunjungi",
+    "cal.visit.date": "Tanggal kunjungan",
+    "cal.visit.party": "Jumlah rombongan",
+    "cal.visit.message": "Pesan (opsional)",
+    "cal.visit.messagePh": "Apa yang ingin Anda bawa atau lakukan?",
+    "cal.visit.submit": "Jadwalkan kunjungan",
+    "cal.visit.submitting": "Menjadwalkan\u2026",
+    "cal.visit.list": "Siapa yang akan datang",
+    "cal.visit.listSub": "Lihat kunjungan yang sudah dijadwalkan orang lain.",
+    "cal.visit.person": "orang",
+    "cal.visit.people": "orang",
+    "cal.visit.empty": "Belum ada kunjungan dijadwalkan. Jadilah yang pertama.",
+    "cal.visit.successTitle": "Kunjungan dijadwalkan!",
+    "cal.visit.successDesc": "Kami akan menyiapkan anak-anak untuk menyambutmu.",
+    "cal.err.required": "Mohon lengkapi formulir",
+    "cal.err.visitRequired": "Nama, email, dan tanggal kunjungan wajib diisi.",
+    "cal.err.prayerRequired": "Nama, email, dan tanggal doa wajib diisi.",
+    "cal.err.donationRequired": "Nama, email, dan tanggal donasi wajib diisi.",
+    "cal.err.generic": "Terjadi kesalahan",
+    "cal.err.tryAgain": "Silakan coba lagi.",
+
+    "cal.prayer.heading": "Berkomitmen satu jam doa",
+    "cal.prayer.subtitle":
+      "\u201CDoa orang benar, bila dengan yakin didoakan, sangat besar kuasanya.\u201D — Yakobus 5:16",
+    "cal.prayer.name": "Nama Anda",
+    "cal.prayer.date": "Tanggal doa",
+    "cal.prayer.time": "Waktu",
+    "cal.prayer.reminder": "Ingatkan saya via email",
+    "cal.prayer.note": "Fokus doa (opsional)",
+    "cal.prayer.notePh":
+      "mis. Untuk kesehatan anak-anak dan kekuatan Ibu Telly",
+    "cal.prayer.submit": "Berkomitmen doa",
+    "cal.prayer.list": "Dinding doa",
+    "cal.prayer.listSub":
+      "Saudara-saudari yang berdiri menggenggam kekosongan bagi anak yatim.",
+    "cal.prayer.reminderSet": "Pengingat aktif",
+    "cal.prayer.empty":
+      "Belum ada doa dijadwalkan. Jadilah yang pertama berdiri menggenggam.",
+    "cal.prayer.successTitle": "Doa dijadwalkan",
+    "cal.prayer.successDescReminder":
+      "Kami akan mengirimi Anda pengingat sebelum waktu doa Anda.",
+    "cal.prayer.successDescNo": "Komitmen doa Anda telah dicatat.",
+
+    "cal.don.heading": "Jadwalkan hari donasi",
+    "cal.don.subtitle":
+      "Pilih hari ketika Anda akan memberi, dan kami akan mengingatkan. Untuk memberi sekarang juga,",
+    "cal.don.visitLink": "buka halaman Donasi",
+    "cal.don.name": "Nama Anda",
+    "cal.don.email": "Email",
+    "cal.don.date": "Tanggal donasi",
+    "cal.don.reminder": "Ingatkan saya via email",
+    "cal.don.note": "Catatan (opsional)",
+    "cal.don.notePh": "mis. Persembahan persepuluhan bulanan untuk anak-anak",
+    "cal.don.submit": "Jadwalkan hari donasi",
+    "cal.don.list": "Hari donasi mendatang",
+    "cal.don.listSub": "Orang lain yang telah menjadwalkan hari untuk memberi.",
+    "cal.don.empty": "Belum ada hari donasi dijadwalkan.",
+    "cal.don.successTitle": "Pengingat donasi dijadwalkan",
+    "cal.don.successDescReminder":
+      "Kami akan mengirimi Anda pengingat pada hari pilihanmu.",
+    "cal.don.successDescNo": "Hari donasimu telah dicatat.",
+
+    // Map
+    "map.badge": "Peta Anak Yatim",
+    "map.heading": "Tiga rumah di seluruh Jawa",
+    "map.subtitle":
+      "Dari Bantul ke Semarang ke Surabaya — rumah-rumah Kristen kecil yang menaungi anak yatim yang tidak diakui negara.",
+    "map.isleTitle": "Pulau Jawa",
+    "map.note": "Anno Domini — panti ditandai dengan bara",
+    "map.allLocations": "Semua lokasi",
+    "map.children": "anak",
+    "map.presentCondition": "Kondisi saat ini",
+    "map.give": "Bantulah rumah ini",
+    "map.schedule": "Jadwalkan kunjungan",
+    "map.gallery": "Lihat galeri",
+    "map.fullName": "Nama lengkap",
+    "map.aksaraJawa": "Aksara Jawa (Jawa kuno)",
+    "map.address": "Alamat",
+    "map.openInMaps": "Buka di Google Maps",
+    "map.location": "Lokasi",
+
+    // Gallery
+    "gallery.badge": "Galeri",
+    "gallery.heading": "Kondisi mereka, wajah mereka",
+    "gallery.subtitle":
+      "Lihat rumah-rumah dan anak-anak yang menunggu. Lalu temukan setiap rumah di peta.",
+    "gallery.openMapTitle": "Temukan setiap rumah di peta",
+    "gallery.openMapDesc":
+      "Dari Bantul ke Semarang ke Surabaya — temukan setiap rumah yang menaungi anak yatim di seluruh Jawa.",
+    "gallery.openMap": "Buka Peta",
+    "gallery.viewOnMap": "Lihat di peta",
+
+    // Donation
+    "don.badge": "Bantulah Anak Yatim",
+    "don.patreonWelcome": "Selamat datang Patreon, masuk sebagai",
+    "don.patreonThanks": "Terima kasih telah berdiri bersama anak yatim. Kesetiaanmu sedang membuka janji Allah bagi anak-anak kecil ini.",
+    "don.patreonSignInPrompt": "Masuk atau buat akun untuk melacak pemberianmu dan berdiri bersama anak yatim.",
+    "don.patreonSignIn": "Masuk",
+    "don.patreonSignUp": "Daftar",
+    "don.patreonDashWelcome": "Selamat datang, patron",
+    "don.patreonDashBody": "Masuk sebagai {email}. Terima kasih telah berdiri bersama anak yatim. Kunjungi beranda untuk memberi, menjadwalkan kunjungan, atau berkomitmen dalam doa.",
+    "don.patreonDashBack": "Kembali ke situs",
+    "don.loginToastTitle": "Selamat datang",
+    "don.loginToastDesc": "Berhasil masuk.",
+    "don.signupToastTitle": "Selamat datang",
+    "don.signupToastDesc": "Akun Anda siap.",
+
+    // Login / signup screen
+    "auth.loginTitle": "Masuk",
+    "auth.signupTitle": "Daftar",
+    "auth.forgotTitle": "Atur ulang kata sandi",
+    "auth.email": "Email",
+    "auth.password": "Kata sandi",
+    "auth.confirmPassword": "Konfirmasi kata sandi",
+    "auth.totp": "Token TOTP (admin saja)",
+    "auth.totpHint": "Kode enam digit dari aplikasi autentikator Anda.",
+    "auth.signInBtn": "Masuk",
+    "auth.signUpBtn": "Buat akun",
+    "auth.sendResetBtn": "Kirim tautan atur ulang",
+    "auth.resetBtn": "Tetapkan kata sandi baru",
+    "auth.forgotLink": "Lupa kata sandi?",
+    "auth.backToSignIn": "Kembali ke masuk",
+    "auth.noAccount": "Baru di sini? Buat akun",
+    "auth.haveAccount": "Sudah punya akun? Masuk",
+    "auth.resetDone": "Jika email tersebut ada, tautan atur ulang telah dibuat.",
+    "auth.devResetLink": "Tautan atur ulang dev (SMTP tidak dikonfigurasi)",
+    "auth.passwordResetOk": "Kata sandi diatur ulang. Anda dapat masuk sekarang.",
+    "auth.signOutBtn": "Keluar",
+
+    // Dashboard cards
+    "dash.changePwTitle": "Ubah kata sandi",
+    "dash.changePwDesc": "Perbarui kata sandi akun Anda.",
+    "dash.currentPassword": "Kata sandi saat ini",
+    "dash.newPassword": "Kata sandi baru",
+    "dash.confirmPassword": "Konfirmasi kata sandi baru",
+    "dash.save": "Simpan",
+    "dash.passwordChanged": "Kata sandi diubah.",
+    "dash.totpTitle": "Daftarkan TOTP",
+    "dash.totpDesc": "Pindai kode QR ini dengan aplikasi autentikator Anda, lalu verifikasi dengan kode 6 digit untuk mendaftarkan rahasia TOTP baru.",
+    "dash.totpNewSecret": "Rahasia baru",
+    "dash.totpToken": "Token verifikasi",
+    "dash.totpRegister": "Daftarkan TOTP",
+    "dash.totpGenerate": "Buat rahasia baru",
+    "dash.totpRegistered": "Rahasia TOTP terdaftar.",
+    "dash.donorsTitle": "Manajemen donor",
+    "dash.donorsDesc": "Hapus donor individual atau hapus semua.",
+    "dash.donorsEmpty": "Belum ada donor tercatat.",
+    "dash.donorsClear": "Hapus semua donor",
+    "dash.donorsDelete": "Hapus",
+    "dash.donorsDeleteConfirm": "Hapus donor ini?",
+    "dash.donorsClearConfirm": "Hapus SEMUA donor? Ini tidak dapat dibatalkan.",
+    "dash.donorsCleared": "Semua donor dihapus.",
+    "dash.donorDeleted": "Donor dihapus.",
+    "dash.donorName": "Nama",
+    "dash.donorAmount": "Jumlah",
+    "dash.donorMethod": "Metode",
+    "dash.donorDate": "Tanggal",
+    "dash.backupTitle": "Cadangkan & pulihkan",
+    "dash.backupDesc": "Unduh cuplikan JSON dari semua data, atau pulihkan dari file cadangan.",
+    "dash.backupDownload": "Unduh cadangan",
+    "dash.backupRestore": "Pulihkan dari cadangan",
+    "dash.backupRestored": "Cadangan dipulihkan.",
+    "dash.backupFailed": "Cadangkan atau pulihkan gagal.",
+    "don.heading": "Klaim janji Allah",
+    "don.subtitle":
+      "\u201CUjilah Aku, sungguh\u2026 apakah Aku tidak membukakan tingkap-tingkap langit dan mencurahkan berkat kepadamu sampai berkelimpahan.\u201D — Maleakhi 3:10",
+    "don.formHeading": "Berikan pemberianmu",
+    "don.formSub": "Pilih cara memberi, dan tentukan apa yang boleh dilihat dunia.",
+    "don.name": "Nama Anda",
+    "don.amount": "Jumlah",
+    "don.currency": "Mata uang",
+    "don.currencyHint": "Jumlah dihitung per mata uang — tanpa konversi.",
+    "don.payment": "Metode pembayaran",
+    "don.secure": "Donasi aman \u00B7 Anda yang memilih apa yang terlihat",
+    "don.maskName": "Sembunyikan identitas saya",
+    "don.maskAmount": "Sembunyikan jumlah saya",
+    "don.showAs": "Tampilkan sebagai",
+    "don.message": "Pesan",
+    "don.messagePh": "Sepatah kata untuk anak-anak\u2026 (wajib)",
+    "don.preview": "Pratinjau — bagaimana orang lain melihat pemberianmu",
+    "don.giveNow": "Donasi sekarang",
+    "don.processing": "Memproses\u2026",
+    "don.err.required":
+      "Nama, jumlah yang valid, metode pembayaran, dan pesan wajib diisi.",
+    "don.err.messageRequired": "Mohon tulis pesan untuk anak-anak.",
+    "don.err.complete": "Mohon lengkapi formulir",
+    "don.successTitle": "Terima kasih atas pemberianmu!",
+    "don.successDesc": "donasi via {method} telah diterima. Semoga Allah membukakan tingkap-tingkap langit.",
+    "don.stats.undisclosed": "Total pemberian yang dirahasiakan",
+    "don.stats.undisclosedHint":
+      "Jumlah dari semua pemberian tersembunyi — dihormati sebagai satu",
+    "don.stats.disclosed": "Pemberian terbuka",
+    "don.stats.disclosedHint": "Dinyatakan terbuka oleh donor",
+    "don.stats.donors": "Donor",
+    "don.stats.donorsHint": "Setiap pemberian, terlihat maupun tidak",
+    "don.list.heading": "Daftar pemberi",
+    "don.list.sub":
+      "Mereka yang telah menjawab panggilan — sebagian disebut namanya, sebagian hanya dikenal Allah.",
+    "don.list.empty": "Belum ada pemberian. Jadilah yang pertama membuka janji.",
+    "don.list.disclosedSum": "Jumlah terbuka",
+    "don.list.undisclosedSum": "Jumlah dirahasiakan",
+    "don.payment.note.PayPal": "Arahkan ke PayPal",
+    "don.payment.note.Stripe": "Kartu aman via Stripe",
+    "don.payment.note.Gopay": "Dompet digital GoPay",
+    "don.payment.note.Shopee Pay": "Dompet digital Shopee Pay",
+    "don.payment.note.QRIS": "Pindai untuk bayar dengan aplikasi QRIS apa pun",
+    "don.payment.qrisTitle": "QRIS \u2014 Quick Response Indonesian Standard",
+    "don.payment.qrisScan": "Pindai kode QR ini dengan aplikasi pendukung QRIS (GoPay, OVO, DANA, ShopeePay, m-banking, dll.) untuk memberi.",
+    "don.payment.note.VISA": "Kartu VISA",
+    "don.payment.note.Mastercard": "Mastercard",
+    "don.payment.note.Bankwire transfer": "Transfer bank",
+
+    // Bankwire
+    "bankwire.title": "Rincian Transfer Bank",
+    "bankwire.subtitle": "Untuk transfer langsung — atas nama Yayasan Rumah Buah Hati",
+    "bankwire.bank": "Bank",
+    "bankwire.swift": "Kode SWIFT",
+    "bankwire.account": "Nomor Rekening",
+    "bankwire.careOf": "Atas nama",
+    "bankwire.copy": "Salin",
+    "bankwire.copied": "Tersalin!",
+    "bankwire.note":
+      "Mohon gunakan nama Anda sebagai berita transfer dan kirim bukti transfer kepada kami agar pemberian Anda dapat kami catat.",
+
+    // Contact
+    "contact.title": "Kontak",
+    "contact.person": "Narahubung",
+    "contact.phone": "Telepon",
+    "contact.instagram": "Instagram",
+    "contact.email": "Email",
+    "contact.whatsapp": "WhatsApp",
+    "contact.whatsappTip": "Pesan Ibu Telly via WhatsApp",
+
+    // Footer
+    "footer.explore": "Jelajahi",
+    "footer.copyright":
+      "Yayasan Rumah Buah Hati. Janji yang ditepati bagi anak yatim.",
+    "footer.verse":
+      "\u201CUmumnya orang miskin tidak akan hilang dari negeri ini.\u201D — Ulangan 15:11",
+    "footer.verseBody":
+      "\u201CIbadah yang murni dan yang tak bernoda di hadapan Allah, Bapa kita, ialah mengunjungi yatim piatu dan janda-janda dalam kesusahan mereka.\u201D",
+    "footer.verseRef": "Yakobus 1:27, TB (LAI)",
+
+    // Language
+    "lang.switch": "Ganti bahasa",
+  },
+};
+
+export function useT() {
+  const lang = useLanguage((s) => s.lang);
+  return (key: string): string => DICT[lang]?.[key] ?? DICT.en[key] ?? key;
+}

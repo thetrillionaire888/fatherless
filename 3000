@@ -1,0 +1,27 @@
+▲ Next.js 16.2.9 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.5.85:3000
+- Environments: .env
+✓ Ready in 296ms
+⚠ Attempted to load @next/swc-darwin-arm64, but an error occurred: dlopen(/Users/simanullang/Downloads/rbh/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node, 0x0001): tried: '/Users/simanullang/Downloads/rbh/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node' (segment '__TEXT' load command content extends beyond end of file), '/System/Volumes/Preboot/Cryptexes/OS/Users/simanullang/Downloads/rbh/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node' (no such file), '/Users/simanullang/Downloads/rbh/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node' (segment '__TEXT' load command content extends beyond end of file)
+  Skipping creating a lockfile at /Users/simanullang/Downloads/rbh/.next/dev/lock because we're using WASM bindings
+
+[auth/login] NODE_VERSION v22.23.0
+[auth/login] DATABASE_URL file:/Users/simanullang/Downloads/rbh/db/custom.db
+[auth/login] attempt { email: 'jansen.simanullang@gmail.com', hasTotp: true }
+prisma:query SELECT `main`.`Admin`.`id`, `main`.`Admin`.`email`, `main`.`Admin`.`passwordHash`, `main`.`Admin`.`totpSecret`, `main`.`Admin`.`createdAt`, `main`.`Admin`.`updatedAt` FROM `main`.`Admin` WHERE (`main`.`Admin`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`Admin`.`id`, `main`.`Admin`.`email`, `main`.`Admin`.`passwordHash`, `main`.`Admin`.`totpSecret`, `main`.`Admin`.`createdAt`, `main`.`Admin`.`updatedAt` FROM `main`.`Admin` WHERE (`main`.`Admin`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+[auth/verifyTotp] verification failed { token: '698044', secretLength: 26 }
+(node:15769) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ POST /api/auth/login 401 in 715ms (next.js: 632ms, application-code: 83ms)
+[auth/login] NODE_VERSION v22.23.0
+[auth/login] DATABASE_URL file:/Users/simanullang/Downloads/rbh/db/custom.db
+[auth/login] attempt { email: 'jansen.simanullang@gmail.com', hasTotp: true }
+prisma:query SELECT 1
+prisma:query SELECT `main`.`Admin`.`id`, `main`.`Admin`.`email`, `main`.`Admin`.`passwordHash`, `main`.`Admin`.`totpSecret`, `main`.`Admin`.`createdAt`, `main`.`Admin`.`updatedAt` FROM `main`.`Admin` WHERE (`main`.`Admin`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`Admin`.`id`, `main`.`Admin`.`email`, `main`.`Admin`.`passwordHash`, `main`.`Admin`.`totpSecret`, `main`.`Admin`.`createdAt`, `main`.`Admin`.`updatedAt` FROM `main`.`Admin` WHERE (`main`.`Admin`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+ POST /api/auth/login 200 in 54ms (next.js: 6ms, application-code: 48ms)
+prisma:query SELECT `main`.`Admin`.`id`, `main`.`Admin`.`email`, `main`.`Admin`.`passwordHash`, `main`.`Admin`.`totpSecret`, `main`.`Admin`.`createdAt`, `main`.`Admin`.`updatedAt` FROM `main`.`Admin` WHERE (`main`.`Admin`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`Admin`.`id`, `main`.`Admin`.`email`, `main`.`Admin`.`passwordHash`, `main`.`Admin`.`totpSecret`, `main`.`Admin`.`createdAt`, `main`.`Admin`.`updatedAt` FROM `main`.`Admin` WHERE (`main`.`Admin`.`id` = ? AND 1=1) LIMIT ? OFFSET ?
+ GET /api/auth/session 200 in 250ms (next.js: 241ms, application-code: 9ms)

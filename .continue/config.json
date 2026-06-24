@@ -1,0 +1,10 @@
+{
+  "modelProviders": {
+    "local-llama": {
+      "apiBase": "http://100.85.58.10:8888/v1",
+      "apiKey": "sk-local-test",
+      "models": ["Qwopus3.6-27B-Coder-MTP-Q5_K_S.gguf"]
+    }
+  },
+  "defaultModel": "local-llama/Qwopus3.6-27B-Coder-MTP-Q5_K_S.gguf"
+}
