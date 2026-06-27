@@ -98,3 +98,36 @@ model Donor {
   message        String?
   createdAt      DateTime @default(now())
 }
+
+// A CMS story — powers BOTH the "Stories" section on the home page AND the
+// Gallery view. Each story is bilingual (EN + ID) and can be placed in either
+// or both surfaces. `status` controls visibility: published | archived | hidden.
+model Story {
+  id            String   @id @default(cuid())
+  // Bilingual content (separate columns for scalars)
+  titleEn       String   @default("")
+  titleId       String   @default("")
+  subtitleEn    String   @default("")
+  subtitleId    String   @default("")
+  // Body paragraphs stored as a JSON string: Localized[] = [{en:string,id:string}, ...]
+  body          String   @default("[]")
+  // Gallery-specific fields (used when showInGallery = true)
+  captionEn     String   @default("")
+  captionId     String   @default("")
+  tagEn         String   @default("")
+  tagId         String   @default("")
+  orphanageId   String   @default("")
+  // Image path, e.g. "/images/candle-hope.png" or "/uploads/abc.png"
+  image         String   @default("")
+  // Classification
+  perspective   String   @default("Field") // Caregiver | Child | Donor | Field
+  originalLang  String   @default("en")    // en | id — which language was authored first
+  // Visibility & placement
+  status        String   @default("published") // published | archived | hidden
+  showInStories Boolean  @default(true)
+  showInGallery Boolean  @default(false)
+  highlight     Boolean  @default(false)
+  sortIndex     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
