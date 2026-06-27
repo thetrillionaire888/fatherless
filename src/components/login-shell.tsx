@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage, useT } from "@/lib/i18n";
+import { StoriesManagementCard } from "@/components/admin/stories-management";
 import QRCode from "qrcode";
 
 type Session = {
@@ -645,6 +646,7 @@ function Dashboard({
           {session.role === "admin" && (
             <ChangeTotpCard t={t} toast={toast} session={session} />
           )}
+          {session.role === "admin" && <StoriesManagementCard />}
           {session.role === "admin" && (
             <DonorManagementCard t={t} toast={toast} lang={lang} />
           )}
