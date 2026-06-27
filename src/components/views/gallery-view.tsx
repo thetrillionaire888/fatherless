@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Images, MapPin, X, Heart } from "lucide-react";
+import { Images, MapPin, X, Heart, Loader2 } from "lucide-react";
 import { ORPHANAGES, type ViewName } from "@/lib/data";
 import { useLanguage, useT } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { StoryRecord } from "@/lib/stories";
+
+// Map a CMS record to the gallery item shape this view renders.
+function toGalleryItem(r: StoryRecord): GalleryItem {
+  return {
+    id: r.id,
+    src: r.image,
+    title: r.title,
+    caption: r.caption,
+    orphanageId: r.orphanageId,
+    tag: r.tag,
+  };
+}
 
 type GalleryItem = {
   id: string;
@@ -154,6 +167,24 @@ export function GalleryView({
   const t = useT();
   const lang = useLanguage((s) => s.lang);
   const [lightbox, setLightbox] = useState<GalleryItem | null>(null);
+  const [items, setItems] = useState<GalleryItem[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/stories?placement=gallery", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((data) => {
+        if (cancelled) return;
+        const list: GalleryItem[] = (data.stories ?? []).map(toGalleryItem);
+        setItems(list.length ? list : ITEMS);
+      })
+      .catch(() => {
+        if (!cancelled) setItems(ITEMS);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -182,8 +213,13 @@ export function GalleryView({
 
       <div className="mx-auto max-w-6xl px-4 pb-20">
         {/* Grid */}
+        {!items ? (
+          <div className="flex items-center justify-center py-20 text-muted-foreground">
+            <Loader2 className="h-5 w-5 animate-spin" />
+          </div>
+        ) : (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {ITEMS.map((item, idx) => {
+          {items.map((item, idx) => {
             const span =
               idx === 0
                 ? "col-span-2 row-span-2"
@@ -222,6 +258,7 @@ export function GalleryView({
             );
           })}
         </div>
+        )}
 
         {/* Link to map */}
         <motion.div
