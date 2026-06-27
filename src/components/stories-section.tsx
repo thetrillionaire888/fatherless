@@ -1,16 +1,63 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Quote, HandHeart, Baby, Camera, Users } from "lucide-react";
+import { Quote, HandHeart, Baby, Camera, Users, Loader2 } from "lucide-react";
 import { STORIES, type Story } from "@/lib/data";
 import { useLanguage, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import type { StoryRecord } from "@/lib/stories";
+
+// Map a CMS record to the minimal Story shape the cards consume.
+function toStory(r: StoryRecord): Story {
+  return {
+    id: r.id,
+    perspective: r.perspective,
+    title: r.title,
+    subtitle: r.subtitle,
+    body: r.body,
+    image: r.image,
+    highlight: r.highlight,
+  };
+}
 
 export function StoriesSection() {
   const t = useT();
   const lang = useLanguage((s) => s.lang);
-  const main = STORIES.filter((s) => s.highlight);
-  const voices = STORIES.filter((s) => !s.highlight);
+  const [stories, setStories] = useState<Story[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/stories?placement=stories", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((data) => {
+        if (cancelled) return;
+        const list: Story[] = (data.stories ?? []).map(toStory);
+        setStories(list.length ? list : STORIES);
+      })
+      .catch(() => {
+        if (!cancelled) setStories(STORIES);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!stories) {
+    return (
+      <section id="stories" className="relative py-20 sm:py-28">
+        <div className="flex items-center justify-center text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  const main = stories.filter((s) => s.highlight);
+  const nonHighlight = stories.filter((s) => !s.highlight);
+  // The narrative trio: first three non-highlight stories (was hardcoded by id).
+  const trio = nonHighlight.slice(0, 3);
+  const voices = nonHighlight.slice(3);
 
   return (
     <section id="stories" className="relative py-20 sm:py-28">
@@ -41,14 +88,14 @@ export function StoriesSection() {
           ))}
         </div>
 
-        {/* The struggle + maid + influencer — narrative trio */}
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {STORIES.filter((s) =>
-            ["telly-struggle", "maid-baby", "influencer"].includes(s.id)
-          ).map((story, idx) => (
-            <TrioCard key={story.id} story={story} index={idx} lang={lang} t={t} />
-          ))}
-        </div>
+        {/* Narrative trio — first three non-highlight stories */}
+        {trio.length > 0 && (
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {trio.map((story, idx) => (
+              <TrioCard key={story.id} story={story} index={idx} lang={lang} t={t} />
+            ))}
+          </div>
+        )}
 
         {/* Multi-perspective voices */}
         <motion.div
@@ -66,11 +113,13 @@ export function StoriesSection() {
           </p>
         </motion.div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {voices.map((story, idx) => (
-            <VoiceCard key={story.id} story={story} index={idx} lang={lang} t={t} />
-          ))}
-        </div>
+        {voices.length > 0 && (
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {voices.map((story, idx) => (
+              <VoiceCard key={story.id} story={story} index={idx} lang={lang} t={t} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -149,13 +198,16 @@ function TrioCard({
   t: TFunc;
 }) {
   const ps = PERSPECTIVE_STYLE[story.perspective];
+  // Pick an icon by perspective (was previously keyed to hardcoded story ids).
   const icon =
-    story.id === "telly-struggle" ? (
+    story.perspective === "Caregiver" ? (
       <HandHeart className="h-5 w-5" />
-    ) : story.id === "maid-baby" ? (
+    ) : story.perspective === "Child" ? (
       <Baby className="h-5 w-5" />
-    ) : (
+    ) : story.perspective === "Field" ? (
       <Camera className="h-5 w-5" />
+    ) : (
+      <HandHeart className="h-5 w-5" />
     );
   return (
     <motion.article
