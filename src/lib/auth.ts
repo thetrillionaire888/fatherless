@@ -1,4 +1,5 @@
-import { scryptSync, randomBytes } from "node:crypto";
+import { scryptSync, randomBytes, randomUUID } from "node:crypto";
+import type { NextRequest, NextResponse } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
 import { authenticator } from "otplib";
 import { db } from "@/lib/db";
