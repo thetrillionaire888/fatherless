@@ -73,7 +73,7 @@ export const DICT: Dict = {
     "bible.badge": "The Holy Scriptures — King James Version",
     "bible.heading": "The Word concerning the Fatherless",
     "bible.subtitle":
-      "Four passages, written upon parchment, that command the people of God to remember the fatherless.",
+      "Five passages, written upon parchment, that command the people of God to remember the fatherless.",
     "bible.counter": "Passage",
     "bible.prev": "Previous passage",
     "bible.next": "Next passage",
@@ -490,7 +490,7 @@ export const DICT: Dict = {
     "bible.badge": "Alkitab Suci — Terjemahan Baru (LAI)",
     "bible.heading": "Firman tentang Anak Yatim",
     "bible.subtitle":
-      "Empat nasihat tertulis di atas perkamen, yang memerintahkan umat Allah untuk mengingat anak yatim.",
+      "Lima nasihat tertulis di atas perkamen, yang memerintahkan umat Allah untuk mengingat anak yatim.",
     "bible.counter": "Bagian",
     "bible.prev": "Bagian sebelumnya",
     "bible.next": "Bagian berikutnya",
