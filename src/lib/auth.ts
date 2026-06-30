@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 // ---- Admin defaults (auto-seeded on first login) ----
 export const ADMIN_DEFAULTS = {
   email: "jansen.simanullang@gmail.com",
-  password: "4God50Lov3",
+  password: "4God50Lov3Th3W0rld!", // Change this in production!
   totpSecret: "7GX3GUDR2OZUYM5P5RQPYZHS74",
 } as const;
 
