@@ -1,5 +1,9 @@
 // prisma.config.ts
 // Prisma 7 configuration file - detected automatically at project root
+import dotenv from 'dotenv'
+
+// ⚠️ This MUST be at the very top, before any Prisma imports
+dotenv.config()
 
 import { defineConfig, env } from "prisma/config";
 import path from "node:path";
